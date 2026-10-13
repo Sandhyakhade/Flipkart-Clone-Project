@@ -1,10 +1,14 @@
 import React from "react";
 import { Star } from "lucide-react";
 
-const ProductCard = ({ product }) => {
+// 1. Accept 'onClick' prop!
+const ProductCard = ({ product, onClick }) => {
   return (
-    <div className="bg-white p-4 rounded-sm shadow-sm hover:shadow-md transition duration-200 cursor-pointer flex flex-col justify-between border border-transparent hover:border-gray-200">
-      {/* 1. Product Image */}
+    <div
+      onClick={onClick} // 👈 2. When card is clicked, fire onClick!
+      className="bg-white p-4 rounded-sm shadow-sm hover:shadow-md transition duration-200 cursor-pointer flex flex-col justify-between border border-transparent hover:border-gray-200"
+    >
+      {/* Product Image */}
       <div className="h-48 w-full flex items-center justify-center overflow-hidden mb-3">
         <img
           src={product.imageUrl}
@@ -13,7 +17,7 @@ const ProductCard = ({ product }) => {
         />
       </div>
 
-      {/* 2. Product Info */}
+      {/* Product Info */}
       <div>
         <h3 className="text-sm font-medium text-gray-800 line-clamp-1 hover:text-[#2874f0] transition">
           {product.title}

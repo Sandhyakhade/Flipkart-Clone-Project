@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Search, ShoppingCart, ChevronDown, User } from "lucide-react";
 
-const Navbar = () => {
+const Navbar = ({ onSearch,cartCount=0,onOpenCart }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
+      onSearch(searchTerm);
       console.log("Searching for:", searchTerm);
       // We will connect this to our backend search API!
     }
@@ -66,11 +67,13 @@ const Navbar = () => {
           </div>
 
           {/* Cart with Badge */}
-          <div className="flex items-center gap-2 cursor-pointer hover:text-gray-200 transition">
+          <div
+            onClick={onOpenCart}
+            className="flex items-center gap-2 cursor-pointer hover:text-gray-200 transition">
             <div className="relative">
               <ShoppingCart size={20} />
               <span className="absolute -top-2 -right-2 bg-[#ff6161] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                0
+                {cartCount}
               </span>
             </div>
             <span className="hidden sm:inline font-semibold">Cart</span>
