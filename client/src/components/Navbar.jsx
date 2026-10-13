@@ -1,23 +1,35 @@
 import React, { useState } from "react";
-import { Search, ShoppingCart, ChevronDown, User } from "lucide-react";
+import { Search, ShoppingCart, ChevronDown, User, LogOut } from "lucide-react";
 
-const Navbar = ({ onSearch,cartCount=0,onOpenCart }) => {
+const Navbar = ({
+  onSearch,
+  cartCount = 0,
+  onOpenCart,
+  user, 
+  onOpenLogin, 
+  onLogout, 
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
+    if (onSearch) {
       onSearch(searchTerm);
-      console.log("Searching for:", searchTerm);
-      // We will connect this to our backend search API!
     }
   };
 
   return (
-    <header className="bg-[#2874f0] text-white sticky top-0 z-50 shadow-md">
+    <header className="bg-[#2874f0] text-white sticky top-0 z-40 shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
-        {/* 1. Flipkart Logo */}
-        <div className="flex flex-col cursor-pointer">
+        {/* Flipkart Logo */}
+        <div
+          onClick={() => {
+            setSearchTerm("");
+            onSearch("");
+          }}
+          className="flex flex-col cursor-pointer"
+        >
           <span className="text-xl font-bold italic tracking-wide">
             Flipkart
           </span>
@@ -28,7 +40,7 @@ const Navbar = ({ onSearch,cartCount=0,onOpenCart }) => {
           </div>
         </div>
 
-        {/* 2. Search Bar */}
+        {/* Search Bar Form */}
         <form
           onSubmit={handleSearch}
           className="flex-1 max-w-2xl relative flex items-center"
@@ -48,28 +60,65 @@ const Navbar = ({ onSearch,cartCount=0,onOpenCart }) => {
           </button>
         </form>
 
-        {/* 3. Navigation Links & Buttons */}
+        {/* Actions Section */}
         <div className="flex items-center gap-6 font-medium text-sm">
-          {/* Login Button */}
-          <button className="bg-white text-[#2874f0] px-8 py-1 font-semibold rounded-sm shadow-sm hover:bg-gray-50 transition">
-            Login
-          </button>
+          {/* USER AUTH BUTTON: Show 'Login' button OR User Dropdown */}
+          {user ? (
+            /* Logged-In User Profile Pill */
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-1.5 font-bold hover:text-gray-200 transition capitalize"
+              >
+                <User size={16} />
+                <span>{user.name}</span>
+                <ChevronDown size={14} />
+              </button>
 
-          {/* Become a Seller */}
+              {/* User Dropdown Menu */}
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-sm shadow-xl border border-gray-100 py-1.5 z-50">
+                  <div className="px-4 py-2 border-b border-gray-100 text-xs">
+                    <p className="text-gray-500">Signed in as</p>
+                    <p className="font-bold truncate">{user.email}</p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      onLogout();
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-semibold hover:bg-gray-50 flex items-center gap-2 text-red-600 transition"
+                  >
+                    <LogOut size={14} /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Logged-Out State: White Login Button */
+            <button
+              onClick={onOpenLogin}
+              className="bg-white text-[#2874f0] px-8 py-1 font-semibold rounded-sm shadow-sm hover:bg-gray-50 transition"
+            >
+              Login
+            </button>
+          )}
+
           <span className="hidden md:inline cursor-pointer hover:text-gray-200 transition">
             Become a Seller
           </span>
 
-          {/* More Options */}
           <div className="hidden md:flex items-center gap-1 cursor-pointer hover:text-gray-200 transition">
             <span>More</span>
             <ChevronDown size={15} />
           </div>
 
-          {/* Cart with Badge */}
+          {/* Cart Icon with Live Count */}
           <div
             onClick={onOpenCart}
-            className="flex items-center gap-2 cursor-pointer hover:text-gray-200 transition">
+            className="flex items-center gap-2 cursor-pointer hover:text-gray-200 transition"
+          >
             <div className="relative">
               <ShoppingCart size={20} />
               <span className="absolute -top-2 -right-2 bg-[#ff6161] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">

@@ -3,7 +3,8 @@ import Navbar from "./components/Navbar";
 import CategoryBar from "./components/CategoryBar";
 import ProductCard from "./components/ProductCard";
 import ProductDetailModal from "./components/ProductDetailModel";
-import CartPage from "./components/CartPage"; // 1. Import CartPage
+import CartPage from "./components/CartPage";
+import LoginModal from "./components/LoginModal"; 
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -12,11 +13,16 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  //  2. Cart State & Page Navigation State!
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
 
-  // Fetch products from Express API
+  // AUTH STATE: Load user from localStorage on first render!
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   const fetchProducts = async (category = "", search = "") => {
     try {
       setLoading(true);
@@ -48,14 +54,12 @@ function App() {
   }, [selectedCategory, searchQuery]);
 
   const handleSearch = (term) => {
-    setShowCart(false); // Return to home grid when searching
+    setShowCart(false);
     setSelectedCategory("");
     setSearchQuery(term);
   };
 
-  //  3. CART HANDLER FUNCTIONS:
-
-  // Add Item to Cart
+  // Cart Functions
   const handleAddToCart = (productToAdd) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find(
@@ -73,42 +77,51 @@ function App() {
     });
   };
 
-  // Increase or Decrease Quantity (+ and -)
   const handleUpdateQuantity = (productId, delta) => {
-    setCart(
-      (prevCart) =>
-        prevCart
-          .map((item) => {
-            if (item._id === productId) {
-              const newQty = item.quantity + delta;
-              return newQty > 0 ? { ...item, quantity: newQty } : null;
-            }
-            return item;
-          })
-          .filter(Boolean), // Automatically removes items if quantity reaches 0!
+    setCart((prevCart) =>
+      prevCart
+        .map((item) => {
+          if (item._id === productId) {
+            const newQty = item.quantity + delta;
+            return newQty > 0 ? { ...item, quantity: newQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean),
     );
   };
 
-  // Remove Item from Cart
   const handleRemoveFromCart = (productId) => {
     setCart((prevCart) => prevCart.filter((item) => item._id !== productId));
   };
 
-  // Calculate total items count for the Navbar badge
   const totalCartCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  //  AUTH HANDLERS:
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData)); // Persist in browser!
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("user"); // Wipe from browser!
+  };
 
   return (
     <div className="min-h-screen bg-[#f1f2f4]">
-      {/* 1. Navbar showing live cart badge and click handler */}
+      {/* 1. Navbar with user profile & login trigger */}
       <Navbar
         onSearch={handleSearch}
         cartCount={totalCartCount}
         onOpenCart={() => setShowCart(true)}
+        user={user}
+        onOpenLogin={() => setShowLoginModal(true)}
+        onLogout={handleLogout}
       />
 
-      {/* 2. Show Cart View OR Home Product Catalog */}
+      {/* 2. Page View: Cart OR Shopping Catalog */}
       {showCart ? (
-        /* CART PAGE */
         <CartPage
           cart={cart}
           onUpdateQuantity={handleUpdateQuantity}
@@ -116,7 +129,6 @@ function App() {
           onContinueShopping={() => setShowCart(false)}
         />
       ) : (
-        /* HOME SHOPPING PAGE */
         <>
           <CategoryBar
             onSelectCategory={(cat) => {
@@ -178,6 +190,14 @@ function App() {
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
           onAddToCart={handleAddToCart}
+        />
+      )}
+
+      {/* 4. Login & Registration Modal */}
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
         />
       )}
     </div>
