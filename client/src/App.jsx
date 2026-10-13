@@ -4,7 +4,9 @@ import CategoryBar from "./components/CategoryBar";
 import ProductCard from "./components/ProductCard";
 import ProductDetailModal from "./components/ProductDetailModel";
 import CartPage from "./components/CartPage";
-import LoginModal from "./components/LoginModal"; 
+import LoginModal from "./components/LoginModal";
+import BannerCarousel from "./components/BannerCarousel"; 
+import CheckoutModal from "./components/CheckoutModal";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -12,6 +14,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
@@ -127,6 +130,7 @@ function App() {
           onUpdateQuantity={handleUpdateQuantity}
           onRemoveFromCart={handleRemoveFromCart}
           onContinueShopping={() => setShowCart(false)}
+          onStartCheckout={() => setShowCheckout(true)}
         />
       ) : (
         <>
@@ -136,7 +140,7 @@ function App() {
               setSelectedCategory(cat === selectedCategory ? "" : cat);
             }}
           />
-
+          {!searchQuery && !selectedCategory && <BannerCarousel />}
           <main className="max-w-7xl mx-auto px-4 pb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-800">
@@ -190,6 +194,22 @@ function App() {
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
           onAddToCart={handleAddToCart}
+        />
+      )}
+      
+      {showCheckout && (
+        <CheckoutModal
+          cart={cart}
+          totalAmount={cart.reduce(
+            (sum, item) => sum + item.price * item.quantity,
+            0,
+          )}
+          user={user}
+          onClose={() => setShowCheckout(false)}
+          onOrderSuccess={() => {
+            setCart([]); // Clears cart to 0!
+            setShowCart(false); // Return to home view
+          }}
         />
       )}
 

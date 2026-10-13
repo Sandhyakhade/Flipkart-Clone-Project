@@ -5,6 +5,7 @@ const CartPage = ({
   cart,
   onUpdateQuantity,
   onRemoveFromCart,
+  onStartCheckout,
   onContinueShopping,
 }) => {
   // 1. Calculate Price Totals using .reduce()
@@ -141,11 +142,7 @@ const CartPage = ({
           {/* Place Order Footer */}
           <div className="p-4 flex justify-end bg-gray-50 border-t border-gray-100">
             <button
-              onClick={() =>
-                alert(
-                  `Order placed successfully for ₹${totalAmount.toLocaleString("en-IN")}! 🎉`,
-                )
-              }
+              onClick={onStartCheckout} //  Calls onStartCheckout instead of alert!
               className="bg-[#fb641b] hover:bg-[#e85a14] text-white font-bold py-3 px-10 rounded-sm text-sm uppercase shadow transition"
             >
               Place Order
@@ -188,7 +185,7 @@ const CartPage = ({
             {totalDiscount > 0 && (
               <div className="border-t border-gray-100 pt-3 text-xs font-semibold text-[#388e3c]">
                 You will save ₹{totalDiscount.toLocaleString("en-IN")} on this
-                order 🎉
+                order 
               </div>
             )}
           </div>
