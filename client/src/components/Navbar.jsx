@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { Search, ShoppingCart, ChevronDown, User, LogOut ,Package} from "lucide-react";
+import { Search, ShoppingCart, ChevronDown, User, LogOut, Package, Heart } from "lucide-react";
 
 
 const Navbar = ({
   onSearch,
   cartCount = 0,
   onOpenCart,
+  wishlistCount = 0,
+  onOpenWishlist,
   user,
   onOpenLogin,
   onLogout,
-  onOpenOrders, 
+  onOpenOrders,
   onOpenProfile,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -138,6 +140,22 @@ const Navbar = ({
           <div className="hidden md:flex items-center gap-1 cursor-pointer hover:text-gray-200 transition">
             <span>More</span>
             <ChevronDown size={15} />
+          </div>
+
+          {/* Wishlist Icon */}
+          <div
+            onClick={onOpenWishlist}
+            className="flex items-center gap-2 cursor-pointer hover:text-gray-200 transition"
+          >
+            <div className="relative">
+              <Heart size={20} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#ff6161] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </div>
+            <span className="hidden sm:inline font-semibold">Wishlist</span>
           </div>
 
           {/* Cart Icon with Live Count */}

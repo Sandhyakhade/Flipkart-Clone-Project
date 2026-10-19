@@ -10,6 +10,7 @@ import CheckoutModal from "./components/CheckoutModal";
 import OrdersPage from "./components/OrdersPage";
 import ProfilePage from "./components/ProfilePage";
 import FilterSidebar from "./components/FilterSidebar";
+import WishlistPage from "./components/WishlistPage";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -24,6 +25,12 @@ function App() {
   const [cart, setCart] = useState([]);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Wishlist — initialized from localStorage so it survives page refresh
+  const [wishlist, setWishlist] = useState(() => {
+    const saved = localStorage.getItem("wishlist");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   //  NAVIGATION VIEW: 'home', 'cart', 'orders', 'profile'
   const [currentView, setCurrentView] = useState("home");
@@ -73,6 +80,18 @@ function App() {
     setCurrentView("home");
     setSelectedCategory("");
     setSearchQuery(term);
+  };
+
+  // Toggle a product in/out of wishlist and sync to localStorage
+  const handleToggleWishlist = (product) => {
+    setWishlist((prev) => {
+      const exists = prev.some((item) => item._id === product._id);
+      const updated = exists
+        ? prev.filter((item) => item._id !== product._id) // remove if already wishlisted
+        : [...prev, product];                              // add if not wishlisted
+      localStorage.setItem("wishlist", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   // Cart Functions
@@ -132,6 +151,8 @@ function App() {
         onSearch={handleSearch}
         cartCount={totalCartCount}
         onOpenCart={() => setCurrentView("cart")}
+        wishlistCount={wishlist.length}
+        onOpenWishlist={() => setCurrentView("wishlist")}
         user={user}
         onOpenLogin={() => setShowLoginModal(true)}
         onLogout={handleLogout}
@@ -155,13 +176,14 @@ function App() {
           }}
         />
       ) : currentView === "orders" ? (
-        <OrdersPage
-          user={user}
-          onContinueShopping={() => setCurrentView("home")}
-        />
+        <OrdersPage user={user} onContinueShopping={() => setCurrentView("home")} />
       ) : currentView === "profile" ? (
-        <ProfilePage
-          user={user}
+        <ProfilePage user={user} onContinueShopping={() => setCurrentView("home")} />
+      ) : currentView === "wishlist" ? (
+        <WishlistPage
+          wishlist={wishlist}
+          onToggleWishlist={handleToggleWishlist}
+          onAddToCart={handleAddToCart}
           onContinueShopping={() => setCurrentView("home")}
         />
       ) : (
@@ -232,6 +254,8 @@ function App() {
                         key={product._id}
                         product={product}
                         onClick={() => setSelectedProduct(product)}
+                        isWishlisted={wishlist.some((w) => w._id === product._id)}
+                        onToggleWishlist={handleToggleWishlist}
                       />
                     ))}
                   </div>
