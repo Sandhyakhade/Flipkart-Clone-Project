@@ -44,7 +44,7 @@ function App() {
   const fetchProducts = async (category = "", search = "", activeFilters = {}) => {
     try {
       setLoading(true);
-      let url = "http://localhost:5000/api/products";
+      let url = "https://flipkart-clone-project-fre2.onrender.com/api/products";
       const params = new URLSearchParams();
 
       // Append all params — URLSearchParams ignores empty strings

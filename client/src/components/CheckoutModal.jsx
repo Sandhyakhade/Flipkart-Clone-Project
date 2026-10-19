@@ -57,7 +57,7 @@ const CheckoutModal = ({ cart, totalAmount, user, onClose, onOrderSuccess }) => 
         "OD" + Math.floor(100000000000 + Math.random() * 900000000000);
 
       if (user && user.token) {
-        const response = await fetch("http://localhost:5000/api/orders", {
+        const response = await fetch("https://flipkart-clone-project-fre2.onrender.com/api/orders", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -22,8 +22,8 @@ const LoginModal = ({ onClose, onLoginSuccess }) => {
     try {
       // Choose the right endpoint based on mode:
       const endpoint = isRegistering
-        ? "http://localhost:5000/api/auth/register"
-        : "http://localhost:5000/api/auth/login";
+        ? "https://flipkart-clone-project-fre2.onrender.com/api/auth/register"
+        : "https://flipkart-clone-project-fre2.onrender.com/api/auth/login";
 
       const payload = isRegistering
         ? { name, email, password }
