@@ -8,11 +8,8 @@ import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config();
 connectDB();
-
 const app = express();
-
 app.use(cors());
-
 app.use(express.json());
 app.use('/api/products', productRoutes)
 app.use('/api/auth', authRoutes);

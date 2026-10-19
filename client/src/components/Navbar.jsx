@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { Search, ShoppingCart, ChevronDown, User, LogOut } from "lucide-react";
+import { Search, ShoppingCart, ChevronDown, User, LogOut ,Package} from "lucide-react";
+
 
 const Navbar = ({
   onSearch,
   cartCount = 0,
   onOpenCart,
-  user, 
-  onOpenLogin, 
-  onLogout, 
+  user,
+  onOpenLogin,
+  onLogout,
+  onOpenOrders, 
+  onOpenProfile,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -77,18 +80,41 @@ const Navbar = ({
 
               {/* User Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-sm shadow-xl border border-gray-100 py-1.5 z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-sm shadow-xl border border-gray-100 py-1.5 z-50">
                   <div className="px-4 py-2 border-b border-gray-100 text-xs">
                     <p className="text-gray-500">Signed in as</p>
                     <p className="font-bold truncate">{user.email}</p>
                   </div>
 
+                  {/* 1. My Profile Link */}
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      onOpenProfile();
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-semibold hover:bg-gray-50 flex items-center gap-2 text-gray-700 transition"
+                  >
+                    <User size={14} /> My Profile
+                  </button>
+
+                  {/* 2. Orders Link */}
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      onOpenOrders();
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-semibold hover:bg-gray-50 flex items-center gap-2 text-gray-700 transition"
+                  >
+                    <Package size={14} /> Orders
+                  </button>
+
+                  {/* 3. Logout */}
                   <button
                     onClick={() => {
                       setShowUserMenu(false);
                       onLogout();
                     }}
-                    className="w-full px-4 py-2 text-left text-xs font-semibold hover:bg-gray-50 flex items-center gap-2 text-red-600 transition"
+                    className="w-full px-4 py-2 text-left text-xs font-semibold hover:bg-gray-50 flex items-center gap-2 text-red-600 border-t border-gray-100 transition"
                   >
                     <LogOut size={14} /> Logout
                   </button>
