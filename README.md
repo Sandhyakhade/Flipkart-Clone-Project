@@ -25,3 +25,6 @@ A full-stack e-commerce web application inspired by Flipkart, built from scratch
 flipkart-project/
 ├── client/       # React frontend application
 └── server/       # Node.js + Express backend API
+
+## Live Demo
+Check out the live app here: https://flipkart-clone-project-psi.vercel.app/
